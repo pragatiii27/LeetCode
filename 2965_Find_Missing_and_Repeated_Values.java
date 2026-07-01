@@ -1,27 +1,29 @@
 class Solution {
     public int[] findMissingAndRepeatedValues(int[][] grid) {
         int n = grid.length;
+        long N = (long) n * n;
 
-        int[] freq = new int[n * n + 1];
+        long expectedSum = N * (N + 1) / 2;
+        long expectedSqSum = N * (N + 1) * (2 * N + 1) / 6;
 
-        // Count frequency of each number
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
-                freq[grid[i][j]]++;
+        long actualSum = 0;
+        long actualSqSum = 0;
+
+        for (int[] row : grid) {
+            for (int num : row) {
+                actualSum += num;
+                actualSqSum += (long) num * num;
             }
         }
 
-        int repeating = -1;
-        int missing = -1;
+        long diff = actualSum - expectedSum; // a - b
 
-        // Find repeating and missing numbers
-        for (int i = 1; i <= n * n; i++) {
-            if (freq[i] == 2) {
-                repeating = i;
-            } else if (freq[i] == 0) {
-                missing = i;
-            }
-        }
+        long sqDiff = actualSqSum - expectedSqSum; // a² - b²
+
+        long sum = sqDiff / diff; // a + b
+
+        int repeating = (int) ((diff + sum) / 2);
+        int missing = (int) (repeating - diff);
 
         return new int[]{repeating, missing};
     }
