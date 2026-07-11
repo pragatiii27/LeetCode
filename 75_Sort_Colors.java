@@ -2,8 +2,8 @@ class Solution {
     public void sortColors(int[] nums) {
        
         int n=nums.length;
-        int left= nums[0];
-        int right= nums[n-1];
+        int left= 0;
+        int right= n-1;
 
         while(left<n && right>0){
             if(nums[left]> nums[right]){
