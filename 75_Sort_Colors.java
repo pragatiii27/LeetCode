@@ -8,8 +8,8 @@ class Solution {
         while(left<n && right>0){
             if(nums[left]> nums[right]){
                 int temp = nums[left];
-                nums[left]= nums[right];
-                nums[right]= nums[temp];
+                nums[left] = nums[right];
+                nums[right] = temp;
 
             }
             left++;
