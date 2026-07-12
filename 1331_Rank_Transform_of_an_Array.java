@@ -1,33 +1,24 @@
 class Solution {
     public int[] arrayRankTransform(int[] arr) {
         int n = arr.length;
+        
+        int[] sorted = arr.clone();
+        Arrays.sort(sorted);
 
-        int[] temp = arr.clone();
+        HashMap<Integer, Integer> rank = new HashMap<>();
+        int r = 1;
 
-        // Bubble Sort
-        for (int i = 0; i < n - 1; i++) {
-            for (int j = 0; j < n - i - 1; j++) {
-                if (temp[j] > temp[j + 1]) {
-                    int t = temp[j];
-                    temp[j] = temp[j + 1];
-                    temp[j + 1] = t;
-                }
+        for (int num : sorted) {
+            if (!rank.containsKey(num)) {
+                rank.put(num, r++);
             }
         }
 
-        HashMap<Integer, Integer> map = new HashMap<>();
-        int rank = 1;
-
+        int[] ans = new int[n];
         for (int i = 0; i < n; i++) {
-            if (!map.containsKey(temp[i])) {
-                map.put(temp[i], rank++);
-            }
+            ans[i] = rank.get(arr[i]);
         }
 
-        for (int i = 0; i < n; i++) {
-            arr[i] = map.get(arr[i]);
-        }
-
-        return arr;
+        return ans;
     }
 }
