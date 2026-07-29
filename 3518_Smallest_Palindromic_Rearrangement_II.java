@@ -5,28 +5,29 @@ class Solution {
     public String smallestPalindrome(String s, int k) {
         LIMIT = k;
 
-        int[] cnt = new int[26];
-        for (char c : s.toCharArray())
-            cnt[c - 'a']++;
-
-        String mid = "";
-        int[] half = new int[26];
-        int m = 0;
-
-        for (int i = 0; i < 26; i++) {
-            if ((cnt[i] & 1) == 1)
-                mid = String.valueOf((char) ('a' + i));
-
-            half[i] = cnt[i] / 2;
-            m += half[i];
+        int[] freq = new int[26];
+        for (char ch : s.toCharArray()) {
+            freq[ch - 'a']++;
         }
 
-        if (countWays(half, m) < k)
+        int[] half = new int[26];
+        int halfLen = 0;
+        String mid = "";
+
+        for (int i = 0; i < 26; i++) {
+            if ((freq[i] & 1) == 1) {
+                mid = "" + (char) ('a' + i);
+            }
+            half[i] = freq[i] / 2;
+            halfLen += half[i];
+        }
+
+        if (countWays(half, halfLen) < k)
             return "";
 
         StringBuilder first = new StringBuilder();
 
-        while (m > 0) {
+        while (halfLen > 0) {
 
             for (int c = 0; c < 26; c++) {
 
@@ -35,11 +36,11 @@ class Solution {
 
                 half[c]--;
 
-                long ways = countWays(half, m - 1);
+                long ways = countWays(half, halfLen - 1);
 
                 if (ways >= k) {
                     first.append((char) ('a' + c));
-                    m--;
+                    halfLen--;
                     break;
                 } else {
                     k -= ways;
@@ -60,18 +61,61 @@ class Solution {
 
         for (int i = 0; i < 26; i++) {
 
-            int f = half[i];
+            if (half[i] == 0)
+                continue;
 
-            for (int j = 1; j <= f; j++) {
-                ans = ans * remain / j;
+            ans *= comb(remain, half[i]);
 
-                if (ans > LIMIT)
-                    return LIMIT;
+            if (ans >= LIMIT)
+                return LIMIT;
 
-                remain--;
-            }
+            remain -= half[i];
         }
 
         return ans;
+    }
+
+    private long comb(int n, int r) {
+
+        if (r > n)
+            return 0;
+
+        r = Math.min(r, n - r);
+
+        long res = 1;
+
+        for (int i = 1; i <= r; i++) {
+
+            long num = n - r + i;
+            long den = i;
+
+            long g = gcd(num, den);
+            num /= g;
+            den /= g;
+
+            g = gcd(res, den);
+            res /= g;
+            den /= g;
+
+            if (res > LIMIT / num)
+                return LIMIT;
+
+            res *= num;
+            res /= den;
+
+            if (res >= LIMIT)
+                return LIMIT;
+        }
+
+        return res;
+    }
+
+    private long gcd(long a, long b) {
+        while (b != 0) {
+            long t = a % b;
+            a = b;
+            b = t;
+        }
+        return a;
     }
 }
